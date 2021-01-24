@@ -126,6 +126,6 @@ function getVideo() {
 
   console.log("🚀 ~ file: app.js ~ line 123 ~ getVideo ~ query", url);
   document.getElementById("content").innerHTML = `
-  <iframe width="100%" height="100%" src="${url}">
+  <iframe width="100%" height="100%" src="${url}" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true">
   </iframe>`;
 }

@@ -60,7 +60,7 @@ async function getEpisodes() {
       }
     }
   } else {
-    $("#alert").text("Error fetching data, check internet").show();
+    $("#alert").text("Sorry, this show is not there").show();
   }
 }
 

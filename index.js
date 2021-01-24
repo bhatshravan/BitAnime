@@ -39,7 +39,8 @@ app.use((req, res, next) => {
 });
 
 app.get("/episode/:mal", (req, res) => {
-  let url = "https://animato.me/api2/getAnime/" + req.params.mal;
+  //   let url = "https://animato.me/api2/getAnime/" + req.params.mal;
+  let url = "https://animato.me/getAnimeMalID/" + req.params.mal;
   console.log("🚀 ~ file: index.js ~ line 32 ~ app.get ~ url", url);
   api
     .get(url)

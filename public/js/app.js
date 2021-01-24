@@ -1,6 +1,6 @@
 let instance = axios.create({
   // baseURL: "https://animato.me",
-  baseURL: "http://localhost:5001",
+  baseURL: "https://api2.bitstreak.in/",
   timeout: 5000,
   headers: {},
 });
@@ -81,7 +81,7 @@ async function search() {
   }
   let resp = axios({
     method: "get",
-    url: "http://localhost:5001/search/" + query,
+    url: "https://api2.bitstreak.in/search/" + query,
     data: {},
   })
     .then((response) => {

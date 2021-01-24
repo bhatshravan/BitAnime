@@ -1,6 +1,7 @@
 let instance = axios.create({
   // baseURL: "https://animato.me",
   baseURL: "https://api2.bitstreak.in/",
+  // baseURL: "http://localhost:5001/",
   timeout: 5000,
   headers: {},
 });
@@ -34,8 +35,9 @@ async function getEpisodes() {
   $("#alert").text("Loading ...").show();
   const urlParams = new URLSearchParams(window.location.search);
   const query = urlParams.get("mal");
+  const vsrc = urlParams.get("vsrc");
 
-  let response = await runAxios("get", `episode/${query}`, {});
+  let response = await runAxios("get", `episode/${query}/${vsrc}`, {});
   if (response.status == "success") {
     $("#alert").hide();
     let episodes = response.data.episodes;
@@ -48,10 +50,9 @@ async function getEpisodes() {
         let postString = "";
         postString += `<tr>
                             <td>${i}</td>
-                            <td><a href="${episode["embedlink"]}" target="_blank">${key.replace(
-          "_",
-          " "
-        )}</a></td>
+                            <td><a href="video.html?video=${
+                              episode["slug"]
+                            }&vsrc=${vsrc}" target="_blank">${key.replace("_", " ")}</a></td>
                         </tr>
                         `;
 
@@ -70,6 +71,7 @@ async function search() {
   document.getElementById("amList").innerHTML = `<tr>
   <th>Sl. No</th>
   <th>Anime</th>
+  <th>Alternate</th>
   <th>Score</th>
   <th>Episodes</th>
   <th>MAL Link</th>
@@ -82,6 +84,7 @@ async function search() {
   let resp = axios({
     method: "get",
     url: "https://api2.bitstreak.in/search/" + query,
+    // url: "http://localhost:5001/search/" + query,
     data: {},
   })
     .then((response) => {
@@ -96,10 +99,11 @@ async function search() {
           i = i + 1;
 
           let postString = `<tr><td>${i}</td>
-          <td><a href="episode.html?mal=${element.mal_id}" target="_blank">${element.title}</a></td>
+          <td><a href="episode.html?mal=${element.mal_id}&vsrc=1">${element.title}</a></td>
+          <td><a href="episode.html?mal=${element.mal_id}&vsrc=2">Alternate</a></td>
           <td>${element.score}</td>
           <td>${element.airing ? "Airing" : element.episodes}</td>
-          <td><a href="${element.url}" target="_blank">Go</a></td></tr>`;
+          <td><a href="video.html/${element.slug}" target="_blank">Go</a></td></tr>`;
           $("#amList").append(postString);
         });
 
@@ -111,4 +115,17 @@ async function search() {
     .catch((error) => {
       $("#alert").text("Error fetching data, check internet").show();
     });
+}
+
+function getVideo() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const query = urlParams.get("video");
+  const vsrc = urlParams.get("vsrc");
+
+  let url = `https://animato.me/${vsrc == 1 ? "embed" : "embed2"}/?id=${query}`;
+
+  console.log("🚀 ~ file: app.js ~ line 123 ~ getVideo ~ query", url);
+  document.getElementById("content").innerHTML = `
+  <iframe width="100%" height="100%" src="${url}">
+  </iframe>`;
 }

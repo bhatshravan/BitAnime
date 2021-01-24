@@ -1,0 +1,21 @@
+{
+  "name": "bitanime",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "axios-cache-adapter": "^2.5.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "got": "^11.8.1",
+    "hooman": "^1.2.6",
+    "morgan": "^1.10.0"
+  }
+}

@@ -31,6 +31,8 @@ async function runAxios(method, url, data) {
   return resp;
 }
 
+let epCount = 0;
+
 async function getEpisodes() {
   $("#alert").text("Loading ...").show();
   const urlParams = new URLSearchParams(window.location.search);
@@ -50,19 +52,42 @@ async function getEpisodes() {
         let postString = "";
         postString += `<tr>
                             <td>${i}</td>
-                            <td><a href="video.html?video=${
+                            <td><p class="text-primary" style="cursor: pointer;" onclick="setEp('video.html?video=${
                               episode["slug"]
-                            }&vsrc=${vsrc}" target="_blank">${key.replace("_", " ")}</a></td>
+                            }&vsrc=${vsrc}',${i},${query})">${key.replace("_", " ")}</a></td>
+                            <td id="v${i}"></td>
                         </tr>
                         `;
 
         $("#epList").append(postString);
         i = i + 1;
+        epCount = i;
       }
+    }
+
+    if (localStorage.getItem(query)) {
+      console.log(localStorage.getItem(query));
+      try {
+        document.getElementById(
+          "v" + localStorage.getItem(query)
+        ).innerHTML = `<button type="button" class="btn btn-primary">Watching</button>`;
+      } catch (err) {}
     }
   } else {
     $("#alert").text("Sorry, this show is not there").show();
   }
+}
+
+function setEp(url, episode, mal) {
+  // console.log("🚀 ~ file: app.js ~ line 73 ~ setEp ~ episode", episode, mal);
+  window.open(url);
+  for (let i = 1; i < epCount; i++) {
+    $(`#v${i}`).text("");
+  }
+  document.getElementById(
+    "v" + episode
+  ).innerHTML = `<button type="button" class="btn btn-primary">Watching</button>`;
+  localStorage.setItem(mal, episode);
 }
 
 async function search() {

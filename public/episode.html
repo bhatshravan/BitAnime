@@ -27,12 +27,19 @@
 
             <div class="mt-5 d-flex flex-column justify-content-center">
                 <h4 id=""><a href="index.html">Home</a></h4>
-                <h1 id="title" class="mt-2"></h1>
+                <div class="d-flex flex-row flex-wrap justify-content-between">
+                    <h1 id="title" class="mt-2 text-wrap"></h1>
+                    <button type="button" id="bk" class="btn btn-warning" style="float: right;" onclick="bookmark()">Add
+                        Bookmark</button>
+                </div>
+
+
+
                 <table class="mt-5 table table-striped" id="epList">
                     <tr>
                         <th>Sl. No</th>
                         <th>Episode</th>
-                        <th></th>
+                        <th>Watch Status</th>
                     </tr>
                 </table>
                 <div class="alert alert-primary" role="alert" id="alert">
@@ -55,6 +62,7 @@
 
     <script src="js/app.js"></script>
     <script>
+        $("#bk").hide();
         getEpisodes();
     </script>
 </body>

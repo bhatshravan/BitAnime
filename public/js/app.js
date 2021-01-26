@@ -6,6 +6,13 @@ let instance = axios.create({
   headers: {},
 });
 
+if (!localStorage.bookmarks) {
+  localStorage.setItem("bookmarks", JSON.stringify({ 1: false }));
+}
+
+let epCount = 0;
+let epTitle = "";
+
 async function runAxios(method, url, data) {
   console.log("Method", method);
   console.log("Data", data);
@@ -31,19 +38,28 @@ async function runAxios(method, url, data) {
   return resp;
 }
 
-let epCount = 0;
-
 async function getEpisodes() {
   $("#alert").text("Loading ...").show();
   const urlParams = new URLSearchParams(window.location.search);
   const query = urlParams.get("mal");
   const vsrc = urlParams.get("vsrc");
+  const airing = urlParams.get("airing");
+  console.log("🚀 ~ file: app.js ~ line 42 ~ getEpisodes ~ airing", airing);
 
-  let response = await runAxios("get", `episode/${query}/${vsrc}`, {});
+  console.log(`episode/${query}/${vsrc}/${airing}`);
+  let response = await runAxios("get", `episode/${query}/${vsrc}/${airing}`, {});
   if (response.status == "success") {
     $("#alert").hide();
     let episodes = response.data.episodes;
     $("#title").text(response.data.Title);
+    epTitle = response.data.Title;
+    $("#bk").show();
+
+    let bookmarks = JSON.parse(localStorage.bookmarks);
+    if (bookmarks[query] !== undefined && bookmarks[query]) {
+      $("#bk").removeClass().addClass("btn btn-success").text("Remove Bookmark");
+    }
+
     console.log("🚀 ~ file: app.js ~ line 39 ~ getEpisodes ~ episodes", episodes);
     let i = 1;
     for (let key in episodes) {
@@ -70,7 +86,7 @@ async function getEpisodes() {
       try {
         document.getElementById(
           "v" + localStorage.getItem(query)
-        ).innerHTML = `<button type="button" class="btn btn-primary">Watching</button>`;
+        ).innerHTML = `<button type="button" class="btn btn-success">Last Watched</button>`;
       } catch (err) {}
     }
   } else {
@@ -91,6 +107,7 @@ function setEp(url, episode, mal) {
 }
 
 async function search() {
+  $("#bm").hide();
   $("#alert").text("Loading ...").show();
   let query = $("#sanime").val();
   document.getElementById("amList").innerHTML = `<tr>
@@ -124,8 +141,12 @@ async function search() {
           i = i + 1;
 
           let postString = `<tr><td>${i}</td>
-          <td><a href="episode.html?mal=${element.mal_id}&vsrc=1">${element.title}</a></td>
-          <td><a href="episode.html?mal=${element.mal_id}&vsrc=2">Alternate</a></td>
+          <td><a href="episode.html?mal=${element.mal_id}&vsrc=1&airing=${
+            element.airing ? "1" : "2"
+          }">${element.title}</a></td>
+          <td><a href="episode.html?mal=${element.mal_id}&vsrc=2&airing=${
+            element.airing ? "1" : "2"
+          }">Alternate</a></td>
           <td>${element.score}</td>
           <td>${element.airing ? "Airing" : element.episodes}</td>
           <td><a href="video.html/${element.slug}" target="_blank">Go</a></td></tr>`;
@@ -153,4 +174,40 @@ function getVideo() {
   document.getElementById("content").innerHTML = `
   <iframe width="100%" height="100%" src="${url}" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true">
   </iframe>`;
+}
+
+function bookmark() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const query = urlParams.get("mal");
+
+  let bookmarks = JSON.parse(localStorage.bookmarks);
+  if (bookmarks[query] !== undefined && bookmarks[query]) {
+    removeBookmark();
+  } else {
+    addBookmark();
+  }
+}
+
+function addBookmark() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const query = urlParams.get("mal");
+  const vsrc = urlParams.get("vsrc");
+  const airing = urlParams.get("airing");
+
+  let bookmarks = JSON.parse(localStorage.bookmarks);
+
+  // bookmarks[query] = $("#title").text();
+  bookmarks[query] = { title: epTitle, mal_id: query, vsrc: vsrc, airing: airing };
+  $("#bk").removeClass().addClass("btn btn-success").text("Remove Bookmark");
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+}
+
+function removeBookmark() {
+  let bookmarks = JSON.parse(localStorage.bookmarks);
+  const urlParams = new URLSearchParams(window.location.search);
+  const query = urlParams.get("mal");
+
+  bookmarks[query] = false;
+  $("#bk").removeClass().addClass("btn btn-warning").text("Add Bookmark");
+  localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
 }

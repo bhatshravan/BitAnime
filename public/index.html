@@ -36,6 +36,10 @@
                         <button class="btn btn-primary" type="button" onclick="search()">Search</button>
                     </div>
                 </div>
+
+                <div class="mt-2 alert alert-primary" role="alert" id="alert">
+                    Could not fetch data or it does not exist
+                </div>
                 <table class="mt-5 table table-striped" id="amList">
                     <tr>
                         <th>Sl. No</th>
@@ -46,9 +50,16 @@
                         <th>MAL Link</th>
                     </tr>
                 </table>
-                <div class="alert alert-primary" role="alert" id="alert">
-                    Could not fetch data or it does not exist
+                <div class="card p-3 mt-5" id="bm">
+                    <h4>Bookmarks</h4>
+                    <table class="mt-2 table table-striped" id="bmList">
+                        <tr>
+                            <th>Sl. No</th>
+                            <th>Anime</th>
+                        </tr>
+                    </table>
                 </div>
+
             </div>
         </div>
     </div>
@@ -73,6 +84,30 @@
                 search();
             }
         });
+
+
+        if (!localStorage.bookmarks) {
+            $("#bmList").hide();
+            localStorage.setItem("bookmarks", JSON.stringify({
+                1: false
+            }));
+        } else {
+            let bookmarks = JSON.parse(localStorage.bookmarks);
+            let i = 0;
+            for (let key in bookmarks) {
+                if (bookmarks.hasOwnProperty(key) && bookmarks[key]) {
+                    let postString = "";
+                    i = i + 1;
+                    let element = bookmarks[key]
+                    postString += `<tr>
+                            <td>${i}</td>
+                            <td><a href="episode.html?mal=${element.mal_id}&vsrc=1&airing=${element.airing}">${element.title}</a> </td> </tr>
+                        `;
+
+                    $("#bmList").append(postString);
+                }
+            }
+        }
     </script>
 </body>
 
